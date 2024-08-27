@@ -91,7 +91,15 @@ def _delete(remote_url=""):
     return _tables(db.all())
 
 def main(port=7860):
-    with gr.Blocks() as demo:
+    CSS = """
+    .duplicate-button {
+    margin: auto !important;
+    color: white !important;
+    background: black !important;
+    border-radius: 100vh !important;
+    }
+    """
+    with gr.Blocks(css=CSS, theme="soft", fill_height=True) as demo:
         gr.Markdown("## 免费内网穿透工具")
         with gr.Row():
             remote_url = gr.Textbox(label="请输入穿透服务器地址", info="格式: 127.0.0.1:7890")
