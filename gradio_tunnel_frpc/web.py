@@ -41,8 +41,15 @@ def _generate(remote_url=""):
         share_token = secrets.token_urlsafe(32)
         os.system(f"ps -ef | grep {share_token} "+ "| awk '{print $2}' | xargs kill -9")
         share_address = setup_tunnel(local_host=ip, local_port=port, share_token=share_token, share_server_address=None).start_tunnel()
-        db.update({"share_address": share_address, "expire_timestamp": time.time() + expire_time}, Query().remote_url.matches(remote_url))
-        time.sleep(expire_time) # 这个共享链接将在 72 小时后过期
+        expire_timestamp = time.time() + expire_time
+        db.update({"share_address": share_address, "expire_timestamp": expire_timestamp}, Query().remote_url.matches(remote_url))
+        while True:
+            if not db.search(Query().remote_url.matches(remote_url)):
+                os.system(f"ps -ef | grep {share_token} "+ "| awk '{print $2}' | xargs kill -9")
+                break
+            if time.time() > expire_timestamp:
+                os.system(f"ps -ef | grep {share_token} "+ "| awk '{print $2}' | xargs kill -9")
+                break
 
     
 def _register(remote_url):
