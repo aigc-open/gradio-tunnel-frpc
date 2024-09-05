@@ -6,8 +6,8 @@ import secrets
 import threading
 import os
 import time
-
-db = TinyDB(storage=MemoryStorage)
+import os
+db = None
 expire_time = 3600 * 24 * 3
 
 def _tables(data:list=[]):
@@ -91,6 +91,8 @@ def _delete(remote_url=""):
     return _tables(db.all())
 
 def main(port=7860):
+    global db
+    db = TinyDB(storage=MemoryStorage)
     CSS = """
     .duplicate-button {
     margin: auto !important;
@@ -115,8 +117,15 @@ def main(port=7860):
 
     demo.launch(server_name="0.0.0.0", server_port=port)
 
+def single(remote_url):
+    global db
+    db = TinyDB('frpc.json')
+    _delete(remote_url)
+    _register(remote_url)
+    while True:
+        pass
 
 if __name__ == "__main__":
     from fire import Fire
-    Fire(main)
+    Fire()
         
