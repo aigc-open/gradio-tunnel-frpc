@@ -17,5 +17,8 @@ setup(
     version="0.1",
     packages=find_packages(),
     include_package_data=True,
+    package_data={
+        '': ['*'],  # 包含所有二进制文件
+    },
     install_requires=requirements,
 )
